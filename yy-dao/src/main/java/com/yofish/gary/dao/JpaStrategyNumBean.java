@@ -13,25 +13,27 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package com.yofish.gary.bean;
+package com.yofish.gary.dao;
 
 
 import com.yofish.gary.annotation.StrategyNum;
+import com.yofish.gary.bean.StrategyNumBean;
 import org.reflections.Reflections;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
+import javax.persistence.DiscriminatorValue;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import static com.yofish.gary.utils.StringUtil.checkNonBlank;
 import static java.util.Objects.nonNull;
 import static java.util.Objects.requireNonNull;
-import static com.yofish.gary.utils.StringUtil.checkNonBlank;
 import static org.apache.commons.lang3.StringUtils.join;
 import static org.apache.commons.lang3.StringUtils.lowerCase;
 import static org.springframework.core.annotation.AnnotationUtils.findAnnotation;
@@ -43,13 +45,13 @@ import static org.springframework.util.CollectionUtils.isEmpty;
  * @date 2019年5月30日 10:00:00
  * @work 策略注解StrategyNum解析
  */
-public class StrategyNumBean implements ApplicationContextAware, InitializingBean {
+public class JpaStrategyNumBean extends StrategyNumBean  {
     /**
      * 策略beanMap
      */
     private static final Map<String, Object> STRATEGY_BEAN_MAP = new HashMap<>();
 
-//    private static final Map<String, Class> DISCRIMINATOR_CLASS_MAP = new HashMap<>();
+    private static final Map<String, Class> DISCRIMINATOR_CLASS_MAP = new HashMap<>();
     /**
      * 容器上下文
      */
@@ -64,9 +66,31 @@ public class StrategyNumBean implements ApplicationContextAware, InitializingBea
     @Override
     public void afterPropertiesSet() throws Exception {
         Map<String, Object> strategyNumMap = applicationContext.getBeansWithAnnotation(StrategyNum.class);
+//        this.getClass().getClasses()
+//        DiscriminatorValue.class
+        Reflections reflections = new Reflections("jpa.domain", strategyNumMap.getClass().getClassLoader());
+        Set<Class<?>> discriminatorSet = reflections.getTypesAnnotatedWith(DiscriminatorValue.class);
         fillStrategyBeanMap(strategyNumMap);
+        fillDiscriminatorSetToMap(discriminatorSet);
     }
 
+    private void fillDiscriminatorSetToMap(Set<Class<?>> discriminatorSet) {
+        if (isEmpty(discriminatorSet)) {
+            return;
+        }
+
+        for (Class zclass : discriminatorSet) {
+            doFillDiscriminator(zclass);
+        }
+
+    }
+
+    private void doFillDiscriminator(Class<?> zclass) {
+        System.out.println(zclass);
+        zclass.getAnnotation(DiscriminatorValue.class);
+        String discriminatorValue = ((DiscriminatorValue) zclass.getAnnotation(DiscriminatorValue.class)).value();
+        DISCRIMINATOR_CLASS_MAP.put(join(zclass.getSuperclass().getSimpleName(), discriminatorValue), zclass);
+    }
 
     /**
      * 根据bean class小写名称获取bean
@@ -173,10 +197,10 @@ public class StrategyNumBean implements ApplicationContextAware, InitializingBea
         return join(annotation.superClass().getSimpleName(), annotation.number());
     }
 
-//    public static Class getClassyByClassAndNumber(Class zClass, String number) {
-//
-//        return DISCRIMINATOR_CLASS_MAP.get(join(zClass.getSimpleName(), number));
-//    }
+    public static Class getClassyByClassAndNumber(Class zClass, String number) {
+
+        return DISCRIMINATOR_CLASS_MAP.get(join(zClass.getSimpleName(), number));
+    }
 
     /**
      * parameters对应的STRATEGY_BEAN_MAP若存在则抛异常

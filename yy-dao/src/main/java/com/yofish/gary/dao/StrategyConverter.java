@@ -1,4 +1,4 @@
-package com.yofish.gary;
+package com.yofish.gary.dao;
 
 import com.yofish.gary.bean.StrategyNumBean;
 import com.yofish.gary.annotation.StrategyNum;

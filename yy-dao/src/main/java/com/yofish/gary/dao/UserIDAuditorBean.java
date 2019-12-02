@@ -1,4 +1,4 @@
-package com.yofish.gary;
+package com.yofish.gary.dao;
 
 /**
  * @Author: xiongchengwei
@@ -14,6 +14,6 @@ import java.util.Optional;
 public class UserIDAuditorBean implements AuditorAware<String> {
     @Override
     public Optional<String> getCurrentAuditor() {
-        return Optional.of("zhangsan");
+        return Optional.of("张三");
     }
 }

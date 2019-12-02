@@ -1,4 +1,4 @@
-package com.yofish.gary.entity;
+package com.yofish.gary.dao.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
