@@ -23,7 +23,6 @@ import java.time.LocalDateTime;
 @EntityListeners(AuditingEntityListener.class)
 public class BaseEntity {
 
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -35,4 +34,8 @@ public class BaseEntity {
     private String updateAuthor;
     @LastModifiedDate
     private LocalDateTime updateTime;
+
+    public BaseEntity(Long id) {
+        this.id = id;
+    }
 }
