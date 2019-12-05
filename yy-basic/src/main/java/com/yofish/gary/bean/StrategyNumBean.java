@@ -124,11 +124,21 @@ public class StrategyNumBean implements ApplicationContextAware, InitializingBea
         checkNonBlank(beanName, "请传入正确的Bean的名称:[" + beanName + "]!");
         Object bean = STRATEGY_BEAN_MAP.get(beanName);
         if (bean == null) {
-            bean = applicationContext.getBean(beanName);
+            bean = applicationContext.getBean(lowerFirst(beanName));
         }
         return requireNonNull(bean, "根据beanName:[" + beanName + "]未查询到该Bean!");
     }
 
+
+    public static String lowerFirst(String oldStr){
+
+        char[]chars = oldStr.toCharArray();
+
+        chars[0] += 32;
+
+        return String.valueOf(chars);
+
+    }
     /**
      * 填充策略beanMap
      *
