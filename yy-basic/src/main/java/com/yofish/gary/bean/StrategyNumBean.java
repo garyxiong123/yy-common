@@ -132,11 +132,8 @@ public class StrategyNumBean implements ApplicationContextAware, InitializingBea
 
     public static String lowerFirst(String oldStr){
 
-        char[]chars = oldStr.toCharArray();
 
-        chars[0] += 32;
-
-        return String.valueOf(chars);
+        return oldStr.substring(0, 1).toLowerCase() + oldStr.substring(1);
 
     }
     /**
