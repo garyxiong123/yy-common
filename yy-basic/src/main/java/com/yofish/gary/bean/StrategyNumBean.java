@@ -78,7 +78,7 @@ public class StrategyNumBean implements ApplicationContextAware, InitializingBea
     public static <T> T getBeanByClass(Class<T> tClass) {
         requireNonNull(tClass, "请传入正确的Class的类:[" + tClass + "]!");
 
-        return (T) getBeanByName(lowerCase(tClass.getSimpleName()));
+        return (T) getBeanByName(lowerFirst(tClass.getSimpleName()));
     }
 
     /**
@@ -162,7 +162,7 @@ public class StrategyNumBean implements ApplicationContextAware, InitializingBea
         StrategyNum annotation = findAnnotation(strategyNumClass, StrategyNum.class);
 
         String combineKey = getCombineKey(annotation);
-        String classNameKey = lowerCase(strategyNumClass.getSimpleName());
+        String classNameKey = lowerFirst(strategyNumClass.getSimpleName());
         requireBeanNotExist(combineKey, classNameKey);
 
         STRATEGY_BEAN_MAP.put(combineKey, strategyNumBean);
@@ -180,10 +180,6 @@ public class StrategyNumBean implements ApplicationContextAware, InitializingBea
         return join(annotation.superClass().getSimpleName(), annotation.number());
     }
 
-//    public static Class getClassyByClassAndNumber(Class zClass, String number) {
-//
-//        return DISCRIMINATOR_CLASS_MAP.get(join(zClass.getSimpleName(), number));
-//    }
 
     /**
      * parameters对应的STRATEGY_BEAN_MAP若存在则抛异常
